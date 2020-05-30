@@ -34,6 +34,7 @@ const getUser = async (req,res) => {
                             generator_email ,
                             generator_rate ,
                             generator_phone ,
+                            generator_ci,
                             generator_place ,
                             generator_picture_url
                             from generators where generator_email = $1 and generator_password = $2;
@@ -283,6 +284,7 @@ const editGenerator = async (req,res)=>{
     generator_born_date,
     generator_gender,
     generator_email,
+    generator_password,
     generator_phone,
     generator_ci,
     generator_place,
@@ -290,6 +292,7 @@ const editGenerator = async (req,res)=>{
     } = req.body;
     console.log(req.body);
     console.log(req.headers.id);
+    const hashedPassword =  await bcrypt.hash(generator_password, 10);
     const response = await pool.query('select * from generators where generator_email = $1 or generator_ci =$2;'
     ,[generator_email,generator_ci],(error, response, fields) => {
         if(!error){
@@ -297,6 +300,7 @@ const editGenerator = async (req,res)=>{
                 const idgenerator = response.rows[0].generator_id;
                 if(idgenerator != id){
                     res.json({status: 'Elige otro correo o CI, uno de ellos o los dos ya estan registrados'});
+                    console.log('Otro correo o CI');
                 } else {
                     const update = pool.query(`
                     update generators set 
@@ -310,7 +314,8 @@ const editGenerator = async (req,res)=>{
                         generator_phone = $9,
                         generator_ci = $10,
                         generator_place = $11,
-                        generator_picture_url = $12
+                        generator_picture_url = $12,
+                        generator_password = $13
                     where 
                         generator_id = $1;
                     `
@@ -325,10 +330,12 @@ const editGenerator = async (req,res)=>{
                         generator_phone,
                         generator_ci,
                         generator_place,
-                        generator_picture_url]
+                        generator_picture_url,
+                        hashedPassword]
                     ,(error, update, fields) => {
                         if(!error){
                             res.json({status: 'Datos actualizados correctamente'});
+                            console.log('Datos actualizados');
                         }else{
                             console.log(error);
                         }
@@ -354,6 +361,7 @@ const editRecolector = async (req,res)=>{
         recolector_born_date,
         recolector_gender,
         recolector_email,
+        recolector_password,
         recolector_phone,
         recolector_ci,
         recolector_city,
@@ -361,6 +369,7 @@ const editRecolector = async (req,res)=>{
      } = req.body;
      console.log(req.body);
      console.log(req.headers.id);
+     const hashedPassword =  await bcrypt.hash(recolector_password, 10);
      const response = await pool.query('select * from recolectors where recolector_email = $1 or recolector_ci =$2;'
      ,[recolector_email,recolector_ci],(error, response, fields) => {
          if(!error){
@@ -368,6 +377,7 @@ const editRecolector = async (req,res)=>{
                  const idrecolector = response.rows[0].recolector_id;
                  if(idrecolector != id){
                      res.json({status: 'Elige otro correo o CI, uno de ellos o los dos ya estan registrados'});
+                     console.log('Otro correo o CI');
                  } else {
                      const update = pool.query(`
                      update recolectors set 
@@ -381,7 +391,8 @@ const editRecolector = async (req,res)=>{
                         recolector_phone = $9,
                         recolector_ci = $10,
                         recolector_city = $11,
-                        recolector_picture_url = $12
+                        recolector_picture_url = $12,
+                        recolector_password = $13
                      where 
                          recolector_id = $1;
                      `
@@ -396,14 +407,15 @@ const editRecolector = async (req,res)=>{
                         recolector_phone,
                         recolector_ci,
                         recolector_city,
-                        recolector_picture_url]
+                        recolector_picture_url,
+                        hashedPassword]
                      ,(error, update, fields) => {
                          if(!error){
                              res.json({status: 'Datos actualizados correctamente'});
+                             console.log('Datos actualizados');
                          }else{
                              console.log(error);
                          }
-                     
                      });
                  }
              } else {
