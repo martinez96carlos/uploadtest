@@ -3,7 +3,7 @@ const pool = require('../database/connectiondm');
 // GRAFICOS GENERALES
 const getVolumenPorResiduoGeneral = async (req,res) => {
     const response = await pool.query(`
-    SELECT A.solid_type_name as tipo_residuo, CAST(COALESCE(sum(C.weight),0) as DEC(4,2)) as volumen
+    SELECT A.solid_type_name as tipo_residuo, round( CAST(COALESCE(sum(C.weight),0) as decimal), 2) as volumen
     FROM dim_solid_types A
     LEFT JOIN dim_solids B ON B.solid_type_id = A.solid_type_id
     LEFT JOIN fact_recolection C ON C.solid_id = B.solid_id
