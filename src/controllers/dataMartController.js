@@ -62,6 +62,7 @@ const getTopFiveRecolectors = async (req,res) => {
     LEFT JOIN dim_orders B ON B.recolector_id = A.recolector_id
     LEFT JOIN fact_recolection C ON C.order_id = B.order_id
     group by A.nombre, A.apellido, A.city
+    order by round( CAST(COALESCE(sum(C.weight),0) as decimal), 2) desc
     limit 5`,(error, response, fields) => {
         if (!error){
            res.status(200).json(response.rows);
