@@ -33,7 +33,8 @@ const getVolumenPorMes  = async (req,res) => {
     select  TO_CHAR(TO_DATE(A.mes::text, 'MM'),'Month') AS "Mes", round( CAST(COALESCE(sum(B.weight),0) as decimal), 2) as volumen
     from dim_time A
     LEFT JOIN fact_recolection B ON B.time_id = A.time_id
-    group by A.mes;`,(error, response, fields) => {
+    group by A.mes
+    order by A.mes asc;`,(error, response, fields) => {
         if (!error){
            res.status(200).json(response.rows);
         } else {
@@ -111,7 +112,8 @@ const getVolumenPorMesPersonal = async (req,res) => {
     LEFT JOIN fact_recolection B ON B.time_id = A.time_id
     LEFT JOIN dim_orders C on B.order_id = C.order_id
     where C.recolector_id = $1
-    group by A.mes;`,[id],(error, response, fields) => {
+    group by A.mes
+    order by A.mes asc;`,[id],(error, response, fields) => {
         if (!error){
            res.status(200).json(response.rows);
         } else {
