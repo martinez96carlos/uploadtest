@@ -265,7 +265,7 @@ const createRecolector = async (req,res) => {
                 recolector_city],(error, register, fields) => {
                 if (!error){
                     register.rows[0].generator = false;
-                    res.status(200).json([false]);
+                    res.status(200).json([true]);
                 } else {
                     res.json({status: 'Registro fallido, revise los datos'})
                     console.log('registro fallido de recolector');
